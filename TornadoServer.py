@@ -7,9 +7,11 @@ from tornado.ioloop import IOLoop
 import tornado.web
 from tornado.web import RequestHandler, Application, authenticated
 
+
 class GetUserHandler(RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
+
 
 class MainHandler(GetUserHandler):
     @authenticated
@@ -26,25 +28,39 @@ class LoginHandler(RequestHandler):
         self.set_secure_cookie("user", self.get_argument('name'))
         self.redirect('/')
 
+
 class NewPageHandler(RequestHandler):
     def get(self):
         self.write('<script>alert('');</script>')
         self.redirect('/login')
-        
+
+
+imgpath = ''
+
+
 class Refrigerator_Opened(RequestHandler):
     def get(self):
-        oxfordcv.face(self.get_argument('path'))
-        
+        print('Server: Set Path')
+        globals()['imgpath'] = '/static/' + os.path.basename(self.get_argument('path'))
+
+
+class polling(RequestHandler):
+    def get(self):
+        pt = globals()['imgpath']
+        globals()['imgpath'] = ''
+        self.redirect(pt)
+
 
 class OCRHandler(RequestHandler):
     def get(self):
-        camera=picamera.PiCamera()
-        camera.video_stabilization=True
+        camera = picamera.PiCamera()
+        camera.video_stabilization = True
         print('Capturing picture...')
         camera.capture('temp.jpg')
         camera.close()
         print('Analyzing...')
         self.write(oxfordcv.ocr('temp.jpg', 'en'))
+
 
 settings = {
     "cookie_secret": "udhdchguygG^&*Y%76798UH&*GfD%^&TG%^$D^%&TXg*(YG7xf677",
@@ -53,14 +69,15 @@ settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
 }
 
-application = tornado.web.Application([
+application = Application([
     (r"/", MainHandler),
     (r"/login", LoginHandler),
     (r"/newpage", NewPageHandler),
     (r"/ocr", OCRHandler),
+    (r"/Refrigerator_Opened", Refrigerator_Opened),
+    (r"/poll", polling),
+
 ], **settings)
-
-
 
 if __name__ == "__main__":
     application.listen(8888)

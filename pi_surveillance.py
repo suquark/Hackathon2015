@@ -10,12 +10,13 @@ import imutils
 import json
 import time
 import cv2
+import pi_surveillance_analyze
 
 class TempImage:
-    def __init__(self, basePath="/home/pi", ext=".jpg"):
+    def __init__(self, basePath="/home/pi/Hackathon2015/static", ext=".jpg"):
         # construct the file path
         self.path = "{base_path}/{rand}{ext}".format(base_path=basePath,
-            rand=str(uuid.uuid4()), ext=ext)
+                                                     rand=str(uuid.uuid4()), ext=ext)
 
     def cleanup(self):
         # remove the file
@@ -46,7 +47,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
     # the timestamp and occupied/unoccupied text
     frame = f.array
     timestamp = datetime.datetime.now()
-    text = "Closed"
+    text = 'Closed'
 
     # resize the frame, convert it to grayscale, and blur it
     frame = imutils.resize(frame, width=500)
@@ -68,11 +69,9 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 
     # threshold the delta image, dilate the thresholded image to fill
     # in holes, then find contours on thresholded image
-    thresh = cv2.threshold(frameDelta, conf["delta_thresh"], 255,
-        cv2.THRESH_BINARY)[1]
+    thresh = cv2.threshold(frameDelta, conf["delta_thresh"], 255, cv2.THRESH_BINARY)[1]
     thresh = cv2.dilate(thresh, None, iterations=2)
-    (cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-        cv2.CHAIN_APPROX_SIMPLE)
+    (cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # loop over the contours
     for c in cnts:
@@ -85,14 +84,12 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         text = "Opened"
-        
+
     # print('Putting labels')
     # draw the text and timestamp on the frame
     ts = timestamp.strftime("%A %d %B %Y %I:%M:%S%p")
-    cv2.putText(frame, "Refrigerator Status: {}".format(text), (10, 20),
-        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(frame, ts, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX,
-        0.35, (0, 0, 255), 1)
+    cv2.putText(frame, "Refrigerator Status: {}".format(text), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    cv2.putText(frame, ts, (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
     # check to see if the room is occupied
     if text == "Opened":
@@ -100,33 +97,31 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
         if (timestamp - lastUploaded).seconds >= conf["min_upload_seconds"]:
             # increment the motion counter
             motionCounter += 1
-
-            # check to see if the number of frames with consistent motion is
-            # high enough
+            # check to see if the number of frames with consistent motion is high enough
             if motionCounter >= conf["min_motion_frames"]:
                 # write the image to temporary file
                 t = TempImage()
                 print('File saved at' + str(t.path))
                 cv2.imwrite(t.path, frame)
+                # analyze
+                pi_surveillance_analyze.analyze(t.path)
                 # t.cleanup()
-                # update the last uploaded timestamp and reset the motion
-                # counter
-                lastUploaded = timestamp
-                motionCounter = 0
+                lastUploaded = timestamp # update the last uploaded timestamp and reset the motion
+                motionCounter = 0 # counter
 
     # otherwise, the room is not occupied
     else:
         motionCounter = 0
 
-    # check to see if the frames should be displayed to screen
-    # if conf["show_video"]:
+        # check to see if the frames should be displayed to screen
+        # if conf["show_video"]:
         # # display the security feed
         # cv2.imshow("Security Feed", frame)
         # key = cv2.waitKey(1) & 0xFF
 
         # # if the `q` key is pressed, break from the lop
         # if key == ord("q"):
-            # break
+        # break
 
     # clear the stream in preparation for the next frame
     rawCapture.truncate(0)

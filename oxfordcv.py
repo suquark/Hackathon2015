@@ -52,9 +52,29 @@ def vision_post(func_name, url, vi_params):
         'Ocp-Apim-Subscription-Key': '69352367526e4294ba9386961666699b'
     }
     return requests.post('https://api.projectoxford.ai/vision/v1/' + func_name,
-                     params=vi_params,
-                     data=open(url).read() if local else json.dumps({"Url": url}),
-                     headers=vision_headers).text
+                         params=vi_params,
+                         data=open(url).read() if local else json.dumps({"Url": url}),
+                         headers=vision_headers).text
+
+
+def face(func_name, url, fparams):
+    local = os.path.exists(url)
+    vision_headers = {
+        'Host': 'api.projectoxford.ai',
+        'Content-Type': 'application/octet-stream' if local else 'application/json',
+        'Ocp-Apim-Subscription-Key': 'd6039cad20944ce3ada767e29e585875'
+    }
+    return requests.post('https://api.projectoxford.ai/face/v0/' + func_name,
+                         params=fparams,
+                         data=open(url).read() if local else json.dumps({"url": url}),
+                         headers=vision_headers).text
+
+
+def face_detect(url, analyzesFaceLandmarks=False, analyzesAge=False, analyzesGender=False, analyzesHeadPose=False):
+    face('detections', url, {'analyzesFaceLandmarks': analyzesFaceLandmarks,
+                             'analyzesAge': analyzesAge,
+                             'analyzesGender': analyzesGender,
+                             'analyzesHeadPose': analyzesHeadPose})
 
 
 # This is fast but paid, plz use it later.
@@ -139,12 +159,12 @@ def ocr(url, lang):
 def img_analyze(url):
     return vision_post('analyses', url, {'visualFeatures': 'All'})
 
+
 """
 def thumbnail(url):
     https://api.projectoxford.ai/vision/v1/thumbnails?width={number}&height={number}&smartCropping=true
 """
 
-#print ocr('/Users/suquark/Desktop/camera.jpeg')
-#print(img_analyze('https://www.projectoxford.ai/images/bright/face/face-verification-photo.jpg'))
-#print img_analyze('/Users/suquark/Desktop/camera.jpeg')
-
+# print ocr('/Users/suquark/Desktop/camera.jpeg')
+# print(img_analyze('https://www.projectoxford.ai/images/bright/face/face-verification-photo.jpg'))
+# print img_analyze('/Users/suquark/Desktop/camera.jpeg')
