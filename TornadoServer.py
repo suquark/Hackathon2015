@@ -30,6 +30,11 @@ class NewPageHandler(RequestHandler):
     def get(self):
         self.write('<script>alert('');</script>')
         self.redirect('/login')
+        
+class Refrigerator_Opened(RequestHandler):
+    def get(self):
+        oxfordcv.face(self.get_argument('path'))
+        
 
 class OCRHandler(RequestHandler):
     def get(self):
