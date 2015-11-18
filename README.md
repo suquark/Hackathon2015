@@ -12,7 +12,7 @@ After a picture was captured, `pi_surveillance.py` will make use of the Oxford P
 
 At about the same time, the client keeps polling messages from the RaspberryPi. `TornadoServer.py` will response with a string if the the result comes. Then the computer will alert a warning window about the changes. 
 
-By the way, we also realize a remote control system for you to control your computer with your phone (something also cool). I used it for a lecture about web security and it works well.
+By the way, we also realize a remote control system `Hackathon2015_Addition` for you to control your computer with your phone (something also cool). I used it for a lecture about web security and it works well.
 
 That's all. There may exist serveral bugs and there should be something with the configuration. But we do not have enough time. We just hack it. Then it will be improved in the future if supported.
 
