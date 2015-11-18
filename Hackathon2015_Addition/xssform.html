@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% autoescape None %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XSS Form</title>
+
+</head>
+<body>
+    <form id="loginForm" method="post" action="/xss">
+        {{xsrf_form_html()}}
+        <input id="uid" name="uid" value="" type="text">
+        <button name="login" type="submit">submit</button>
+    </form>
+</body>
+</html>

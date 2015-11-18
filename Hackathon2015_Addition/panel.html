@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Control Panel</title>
+    <script type="text/javascript">
+/* 创建 XMLHttpRequest 对象 */
+var xmlHttp=new XMLHttpRequest();
+var host = ""
+// -----------ajax方法-----------//
+function Post(){
+    var url=host+Math.random();
+    xmlhttp.open("POST",url,true);
+    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xmlhttp.send();
+    //xmlHttp.onreadystatechange=callback;//发送事件后，收到信息了调用函数
+}
+/* function responsed(){
+    if(xmlHttp.readyState==1||xmlHttp.readyState==2||xmlHttp.readyState==3){
+        // 本地提示：加载中/处理中
+                                                 
+    }
+    if (xmlHttp.readyState==4 && xmlHttp.status==200){
+        var d=xmlHttp.responseText; // 返回值
+        // 处理返回值
+    }
+} */
+
+// -----------ajax方法-----------//
+function Get(content){
+    xmlHttp.open("GET",host + content,true);
+    //xmlHttp.onreadystatechange=favorOK;//发送事件后，收到信息了调用函数
+    xmlHttp.send();
+}
+function Sendkey(key){
+    Get("/kbdctl?key=" + key);
+}
+function Sendkey2(key1,key2){
+    Get("/kbdctl2?key1=" + key1 +"&key2=" + key2);
+}
+function Sendcmd(cmd){
+    Get("/sysctl?cmd=" + cmd);
+}
+</script>
+</head>
+<body>
+<button onclick="Sendkey(91)"> Winkey </button>
+<button onclick="Sendcmd('blog.cmd')"> Blog </button>
+<br>
+<button onclick="Sendkey(38)" width="10%"> Up </button>
+<br>
+<button onclick="Sendkey(37)" width ="10%"> Left </button>
+<button onclick="Sendkey(122)"> F11 </button>
+<button onclick="Sendkey(39)"> Right </button>
+<br>
+<button onclick="Sendkey(40)"> Down </button>
+<br>
+<button onclick="Sendkey2(17,107)"> Ctrl + </button>
+<button onclick="Sendkey2(17,109)"> Ctrl - </button>
+<br>
+<button onclick="Sendkey2(16,116)"> PowerPoint Display (Shift+F5) </button>
+<br>
+<button onclick="Sendcmd('flash0day.txt')"> flash0day </button>
+
+</body>
+</html>

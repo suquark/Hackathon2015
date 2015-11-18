@@ -2,7 +2,7 @@
 
 This is our project for this year's Hackathon. Open-sourced for everyone to enjoy it.
 
-This project is IOT-oriented. We use a RaspberryPi and a computer to provide service. 
+This project is IoT-oriented. We use a RaspberryPi(raspdebian or windows IoT, with python2.7) and a computer to provide service.
 
 First we start a Tornado server(`TornadoServer.py`) and a daemon process(`pi_surveillance.py`) to capture the picture. We also start the client server on a computer.
 
@@ -12,7 +12,7 @@ After a picture was captured, `pi_surveillance.py` will make use of the Oxford P
 
 At about the same time, the client keeps polling messages from the RaspberryPi. `TornadoServer.py` will response with a string if the the result comes. Then the computer will alert a warning window about the changes. 
 
-By the way, we also realize a remote control system for you to control your computer with your phone.
+By the way, we also realize a remote control system for you to control your computer with your phone (something also cool). I used it for a lecture about web security and it works well.
 
 That's all. There may exist serveral bugs and there should be something with the configuration. But we do not have enough time. We just hack it. Then it will be improved in the future if supported.
 

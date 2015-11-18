@@ -49,8 +49,12 @@ class Refrigerator_Opened(RequestHandler):
 
 class polling(RequestHandler):
     def get(self):
-        self.write(globals()['info'])
-        globals()['info'] = ''
+        if globals()['info'] == '':
+            self.set_status(404)
+        else:
+            self.write(globals()['info'])
+            globals()['info'] = ''
+
 
 class image(RequestHandler):
     def get(self):
