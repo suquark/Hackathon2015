@@ -6,6 +6,7 @@ import picamera
 from tornado.ioloop import IOLoop
 import tornado.web
 from tornado.web import RequestHandler, Application, authenticated
+import json
 
 
 class GetUserHandler(RequestHandler):
@@ -36,15 +37,22 @@ class NewPageHandler(RequestHandler):
 
 
 imgpath = ''
+info = ''
 
 
 class Refrigerator_Opened(RequestHandler):
     def get(self):
         print('Server: Set Path')
         globals()['imgpath'] = '/static/' + os.path.basename(self.get_argument('path'))
+        globals()['info'] = json.dumps(self.get_argument('info'))
 
 
 class polling(RequestHandler):
+    def get(self):
+        self.write(globals()['info'])
+        globals()['info'] = ''
+
+class image(RequestHandler):
     def get(self):
         pt = globals()['imgpath']
         globals()['imgpath'] = ''
@@ -75,6 +83,7 @@ application = Application([
     (r"/newpage", NewPageHandler),
     (r"/ocr", OCRHandler),
     (r"/Refrigerator_Opened", Refrigerator_Opened),
+    (r"image", image),
     (r"/poll", polling),
 
 ], **settings)

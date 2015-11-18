@@ -3,7 +3,6 @@ NOTICE:
 
 """
 
-
 __author__ = 'suquark'
 
 import base64
@@ -13,77 +12,69 @@ import requests
 import os
 
 
-class OnlineOCR:
-    """
-    curl 'https://www.projectoxford.ai/Demo/Ocr'
-     -H 'Cookie: __RequestVerificationToken=vxIdQTNJ5i1Ijfex_-QR_oOMJ1lHIs3KbwaS1dr4L-mc5D2xwG6F1JuwSoAMhtQaCy0kGwUQMu2bHg6els_aXHWj_xGvtZB41fjNSWQMibo1'
-    --data '@/Users/suquark/Desktop/pic_base64.dat' --compressed
-    """
+# def recg(self, path):
+#     try:
+#         data = base64.encodestring(open(path).read())
+#         r = self.client.post('https://www.projectoxford.ai/Demo/Ocr',
+#                              {'Data': data, 'isUrl': 'false', 'languageCode': 'en',
+#                               '__RequestVerificationToken': self.token})
+#         dr = json.loads(json.loads(unicode(r.text)))
+#         s = ''
+#         for lines in dr['regions']:
+#             for line in lines['lines']:
+#                 for box in line['words']:
+#                     s += box['text'] + ' '
+#                 s += '\r\n'
+#             s += '\r\n'
+#         return s
+#     except:
+#         return 'ERROR'
+class vision_common:
+    def __init__(self, **kwargs):
+        self.skey = kwargs['skey']
+        self.subname = kwargs['subname']
 
-    def __init__(self):
-        try:
-            self.client = requests.Session()
-            text = self.client.get('https://www.projectoxford.ai/demo/visions').text
-            sp = '<input name="__RequestVerificationToken" type="hidden" value="'
-            txt = text[text.find(sp) + len(sp):]
-            self.token = txt[:txt.find('"')]
-            print 'Online OCR Login'
-        except:
-            print 'Online OCR Fail'
-
-    def recg(self, path):
-        try:
-            data = base64.encodestring(open(path).read())
-            r = self.client.post('https://www.projectoxford.ai/Demo/Ocr',
-                                 {'Data': data, 'isUrl': 'false', 'languageCode': 'en',
-                                  '__RequestVerificationToken': self.token})
-            dr = json.loads(json.loads(unicode(r.text)))
-            s = ''
-            for lines in dr['regions']:
-                for line in lines['lines']:
-                    for box in line['words']:
-                        s += box['text'] + ' '
-                    s += '\r\n'
-                s += '\r\n'
-            return s
-        except:
-            return 'ERROR'
+    def post(self, url, params, lastname=''):
+        is_local = os.path.exists(url)
+        vision_headers = {
+            'Host': 'api.projectoxford.ai',
+            'Content-Type': 'application/octet-stream' if is_local else 'application/json',
+            'Ocp-Apim-Subscription-Key': self.skey
+        }
+        return requests.post('https://api.projectoxford.ai/' + self.subname + lastname,
+                             params=params,
+                             data=open(url).read() if is_local else json.dumps({"Url": url}),
+                             headers=vision_headers).text
 
 
-def vision_post(func_name, url, vi_params):
-    local = os.path.exists(url)
-    vision_headers = {
-        'Host': 'api.projectoxford.ai',
-        'Content-Type': 'application/octet-stream' if local else 'application/json',
-        'Ocp-Apim-Subscription-Key': oxford_key.cv_key
-    }
-    return requests.post('https://api.projectoxford.ai/vision/v1/' + func_name,
-                         params=vi_params,
-                         data=open(url).read() if local else json.dumps({"Url": url}),
-                         headers=vision_headers).text
+def emotion(url, params=None):
+    hst = vision_common(skey=oxford_key.emotion_key, subname='emotion/v1.0/')
+    return hst.post(url, params, 'recognize')
 
 
-def face(func_name, url, fparams):
-    local = os.path.exists(url)
-    vision_headers = {
-        'Host': 'api.projectoxford.ai',
-        'Content-Type': 'application/octet-stream' if local else 'application/json',
-        'Ocp-Apim-Subscription-Key': oxford_key.face_key
-    }
-    return requests.post('https://api.projectoxford.ai/face/v0/' + func_name,
-                         params=fparams,
-                         data=open(url).read() if local else json.dumps({"url": url}),
-                         headers=vision_headers).text
+def emotion_type(url, params=None):
+    hst = vision_common(skey=oxford_key.emotion_key, subname='emotion/v1.0/')
+    data = json.loads(hst.post(url, params, 'recognize'))
+    return sorted(data[0]['scores'].items(), key=lambda d: d[1], reverse=True)[0][0]
+
+
+def vision_post(func_name, url, params):
+    hst = vision_common(skey=oxford_key.cv_key, subname='/vision/v1/')
+    return hst.post(url, params, func_name)
+
+
+def face(func_name, url, params):
+    hst = vision_common(skey=oxford_key.face_key, subname='/face/v0/')
+    return hst.post(url, params, func_name)
 
 
 def face_detect(url, analyzesFaceLandmarks=False, analyzesAge=False, analyzesGender=False, analyzesHeadPose=False):
-    face('detections', url, {'analyzesFaceLandmarks': analyzesFaceLandmarks,
-                             'analyzesAge': analyzesAge,
-                             'analyzesGender': analyzesGender,
-                             'analyzesHeadPose': analyzesHeadPose})
+    return face('detections', url, {'analyzesFaceLandmarks': analyzesFaceLandmarks,
+                                    'analyzesAge': analyzesAge,
+                                    'analyzesGender': analyzesGender,
+                                    'analyzesHeadPose': analyzesHeadPose})
 
 
-# This is fast but paid, plz use it later.
 def ocr(url, lang):
     """
     unk (AutoDetect)
