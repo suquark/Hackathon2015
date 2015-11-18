@@ -1,8 +1,14 @@
+"""
+NOTICE:
+
+"""
+
+
 __author__ = 'suquark'
 
 import base64
 import json
-
+import oxford_key
 import requests
 import os
 
@@ -49,7 +55,7 @@ def vision_post(func_name, url, vi_params):
     vision_headers = {
         'Host': 'api.projectoxford.ai',
         'Content-Type': 'application/octet-stream' if local else 'application/json',
-        'Ocp-Apim-Subscription-Key': '69352367526e4294ba9386961666699b'
+        'Ocp-Apim-Subscription-Key': oxford_key.cv_key
     }
     return requests.post('https://api.projectoxford.ai/vision/v1/' + func_name,
                          params=vi_params,
@@ -62,7 +68,7 @@ def face(func_name, url, fparams):
     vision_headers = {
         'Host': 'api.projectoxford.ai',
         'Content-Type': 'application/octet-stream' if local else 'application/json',
-        'Ocp-Apim-Subscription-Key': 'd6039cad20944ce3ada767e29e585875'
+        'Ocp-Apim-Subscription-Key': oxford_key.face_key
     }
     return requests.post('https://api.projectoxford.ai/face/v0/' + func_name,
                          params=fparams,
