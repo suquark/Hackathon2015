@@ -49,7 +49,7 @@ If you are in windows-IoT,
 4. [in the raspberrypi] Try to make your Pi recognize the wireless network card. It is proved to be very hard. You may find dirvers and try to install it.
 5. Use netsh to connect to your wifi.
 6. Refer to ipconfig to find whether it is well configured.
-7. Try to get a C/C++ compile which configured to support CPython (We find it difficult. It is optional).
+7. Try to get a C/C++ compiler which configured to support CPython (We find it difficult. It is optional).
 8. Use pip to install different libraries as follow. You need to set environment for pip by yourself.
 9. Follow guides on Microsoft's website to get ideas about how to deal with python projects.
 
