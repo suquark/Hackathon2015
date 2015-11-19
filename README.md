@@ -44,6 +44,7 @@ Take raspdebian system as an example, you may need to:
 ...Then you may start our project.
 
 If you are in windows-IoT,
+
 1. Use powershell to start the Remote Management Server
 2. Use powershell to add raspberrypi into the known hosts
 3. Use powershell to login. If fail you may check your parameters in step 1-3.
@@ -53,6 +54,7 @@ If you are in windows-IoT,
 7. Try to get a C/C++ compiler which configured to support CPython (We find it difficult. It is optional).
 8. Use pip to install different libraries as follow. You need to set environment for pip by yourself.
 9. Follow guides on Microsoft's website to get ideas about how to deal with python projects.
+
 
 ## Programmer's advice to big companies and anyone devoted to IoT platform
 
