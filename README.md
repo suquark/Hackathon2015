@@ -23,6 +23,7 @@ Thank u for reading the doc.
 
 ### Requirements : RaspberryPi with Python2.7.9+ but not Python3.*, a computer with wireless network device and has windows installed. The raspberrypi has a fixed IP 192.168.43.161. You should also configure it with imaging libraries (libjpeg, imutils, opencv and more). Frankly speaking, we find it very hard with configuration, for different computers varies a lot from their environment. So it is OK that you find it cannot work inside your computer, for you need to deal with your environment.
 Take raspdebian system as an example, you may need to:
+
 1. Set your wifi connected to a router correctly. (/etc/network/interface)
 2. ssh to login
 3. sudo apt-get update
