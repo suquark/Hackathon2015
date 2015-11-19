@@ -31,7 +31,7 @@ namespace Hackathon2015
 
         static async void MakeRequest()
         {
-            var client = new HttpClient();
+
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
             // Request headers
@@ -44,7 +44,7 @@ namespace Hackathon2015
             //queryString["analyzesGender"] = "false";
             //queryString["analyzesHeadPose"] = "false";
             var uri = "http://192.168.43.161:8888/poll" + queryString;
-
+            var uriimage = "http://192.168.43.161:8888/image" + queryString;
             HttpResponseMessage response;
             // Request body
             //byte[] byteData = Encoding.UTF8.GetBytes("{body}");
@@ -58,13 +58,23 @@ namespace Hackathon2015
             {
                 try
                 {
-                    response = await client.GetAsync(uri);
-                    if (response.IsSuccessStatusCode)
+                    using (var client = new HttpClient())
                     {
-                        var bmp = new Bitmap(await response.Content.ReadAsStreamAsync());
-                        var fm = new Form1();
-                        fm.pictureBox1.Image = bmp;
-                        fm.ShowDialog();
+                        response = await client.GetAsync(uri);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var fm = new Form1();
+                            fm.textBox1.Text = await response.Content.ReadAsStringAsync();
+                            using (var clienti = new HttpClient())
+                            {
+                                //fm.pictureBox1.Image = new Bitmap(await clienti.GetStreamAsync(uriimage));
+                                var ntwk = new Microsoft.VisualBasic.Devices.Network();
+
+                                ntwk.DownloadFile(uriimage, "temp.jpg", "", "", false, 100, true);
+                                fm.pictureBox1.Image = new Bitmap("temp.jpg");
+                            }
+                            fm.ShowDialog();
+                        }
                     }
                 }
                 catch (Exception e)

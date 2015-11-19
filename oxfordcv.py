@@ -55,7 +55,10 @@ def emotion(url, params=None):
 def emotion_type(url, params=None):
     hst = vision_common(skey=oxford_key.emotion_key, subname='emotion/v1.0/')
     data = json.loads(hst.post(url, params, 'recognize'))
-    return sorted(data[0]['scores'].items(), key=lambda d: d[1], reverse=True)[0][0]
+    try:
+        return sorted(data[0]['scores'].items(), key=lambda d: d[1], reverse=True)[0][0]
+    except Exception:
+        return 'Cannot detect emotion'
 
 
 def vision_post(func_name, url, params):

@@ -1,11 +1,12 @@
 __author__ = 'suquark'
 import requests
 import oxfordcv
+import json
 
 
 def analyze(path):
-    rl = {'face_detection': oxfordcv.face_detect(path, True, True, True, True),
-          'emotion': oxfordcv.emotion_type(img)}
+    rl = json.dumps({'face_detection': oxfordcv.face_detect(path, True, True, True, True),
+                    'emotion': oxfordcv.emotion_type(path)})
     requests.get('http://127.0.0.1:8888/Refrigerator_Opened', params={'path': path, 'info': rl})
     return rl
 
