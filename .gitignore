@@ -2,3 +2,5 @@
 .*
 *.pyc
 oxford_key.py
+*.exe
+*.pdb
